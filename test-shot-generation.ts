@@ -10,23 +10,25 @@
 function calculateShotGeneration(textLength: number) {
   // 叙事语速：200字/分钟（行业标准）
   const estimatedMinutes = Math.ceil(textLength / 200);
-  
+
   // 分镜密度：3-5个/分钟（修正为更合理的值）
   // 短剧标准8-12个/分钟，但AI生成成本考虑，取保守值3-5个
   let density = 3;
-  if (textLength < 3000) density = 5;      // 短篇：更密集
-  else if (textLength < 10000) density = 4; // 中篇：适中
-  else density = 3;                         // 长篇：稀疏
-  
+  if (textLength < 3000)
+    density = 5; // 短篇：更密集
+  else if (textLength < 10000)
+    density = 4; // 中篇：适中
+  else density = 3; // 长篇：稀疏
+
   // 目标分镜数（设置上限避免过多）
   let targetShots = Math.ceil(estimatedMinutes * density);
   const maxShots = textLength < 10000 ? 150 : 500; // 中短篇上限150，长篇上限500
   targetShots = Math.min(targetShots, maxShots);
-  
+
   // 分层：关键分镜70%，可选分镜30%
   const keyShots = Math.ceil(targetShots * 0.7);
   const optionalShots = targetShots - keyShots;
-  
+
   return {
     textLength,
     estimatedMinutes,
@@ -56,11 +58,11 @@ testCases.forEach(tc => {
   const result = calculateShotGeneration(tc.length);
   console.log(
     `${tc.name.padEnd(12)} | ${result.textLength.toString().padStart(6)} | ` +
-    `${result.estimatedMinutes.toString().padStart(8)} | ` +
-    `${result.density.toString().padStart(4)} | ` +
-    `${result.targetShots.toString().padStart(6)} | ` +
-    `${result.keyShots.toString().padStart(4)} | ` +
-    `${result.optionalShots.toString().padStart(4)}`
+      `${result.estimatedMinutes.toString().padStart(8)} | ` +
+      `${result.density.toString().padStart(4)} | ` +
+      `${result.targetShots.toString().padStart(6)} | ` +
+      `${result.keyShots.toString().padStart(4)} | ` +
+      `${result.optionalShots.toString().padStart(4)}`
   );
 });
 
@@ -78,7 +80,9 @@ const result7000 = calculateShotGeneration(7000);
 console.log(`字数: ${result7000.textLength}`);
 console.log(`估算时长: ${result7000.estimatedMinutes}分钟 (7000÷200)`);
 console.log(`分镜密度: ${result7000.density}个/分钟 (中篇密度)`);
-console.log(`目标分镜: ${result7000.targetShots}个 (${result7000.estimatedMinutes}×${result7000.density})`);
+console.log(
+  `目标分镜: ${result7000.targetShots}个 (${result7000.estimatedMinutes}×${result7000.density})`
+);
 console.log(`关键分镜: ${result7000.keyShots}个 (${result7000.targetShots}×0.7)`);
 console.log(`可选分镜: ${result7000.optionalShots}个 (${result7000.targetShots}×0.3)`);
 console.log(`\n对比:`);
